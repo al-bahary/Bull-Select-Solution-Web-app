@@ -1,0 +1,76 @@
+<?php
+include("adformheader.php");
+include("dbconnection.php");
+$page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page number
+$limit = 10; // Number of records per page
+$offset = ($page - 1) * $limit; // Offset calculation
+
+$sql = "SELECT * FROM doctor LIMIT $limit OFFSET $offset";
+
+if(isset($_GET[delid]))
+{
+	$sql ="DELETE FROM doctor WHERE doctorid='$_GET[delid]'";
+	$qsql=mysqli_query($con,$sql);
+	if(mysqli_affected_rows($con) == 1)
+	{
+		echo "<script>alert('Vet record deleted successfully..');</script>";
+	}
+}
+?>
+<div class="container-fluid">
+	<div class="block-header">
+		<h2 class="text-center">View Available Vet</h2>
+
+	</div>
+
+<div class="card">
+
+	<section class="container">
+		<table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+			<thead>
+				<tr>
+					<td>Name</td>
+					<td>Contact</td>
+					<td>LoginID</td>
+					<td>Consultancy Charge</td>
+					<td>City</td>
+					<td>Educational Certificate</td>
+					<td>Experience</td>
+					<td>Status</td>
+					<td>Action</td>
+				</tr>
+			</thead>
+			<tbody>
+				
+				<?php
+				$sql ="SELECT * FROM doctor";
+				$qsql = mysqli_query($con,$sql);
+				while($rs = mysqli_fetch_array($qsql))
+				{
+
+					$sqldept = "SELECT * FROM department WHERE departmentid='$rs[departmentid]'";
+					$qsqldept = mysqli_query($con,$sqldept);
+					$rsdept = mysqli_fetch_array($qsqldept);
+					echo "<tr>
+					<td>&nbsp;$rs[doctorname]</td>
+					<td>&nbsp;$rs[mobileno]</td>
+					<td>&nbsp;$rs[loginid]</td>
+					<td>&nbsp;$rs[consultancy_charge]</td>
+					 <td>&nbsp;$rs[city]</td>
+					<td>&nbsp;$rs[education]</td>
+					<td>&nbsp;$rs[experience] year</td>
+					<td>$rs[status]</td>
+					<td>&nbsp;
+					<a href='vet.php?editid=$rs[doctorid]' class='btn btn-sm btn-raised g-bg-cyan'>Edit</a> <a href='viewdoctor.php?delid=$rs[doctorid]' class='btn btn-sm btn-raised g-bg-blush2'>Delete</a> </td>
+					</tr>";
+				}
+				?>      </tbody>
+			</table>
+
+            
+		</section>
+	</div>
+</div>
+	<?php
+	include("adformfooter.php");
+	?>
